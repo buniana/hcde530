@@ -1,0 +1,45 @@
+# HCDE 530 Project Rules
+
+This rule applies to all work in this repository.
+
+## Directory structure (keep this section current)
+```text
+hcde530/
+├── .cursorrules
+├── .gitignore
+└── HCDE 530 Week 2 Project/
+    ├── README.md
+    ├── PROJECT_CONTEXT.md
+    ├── demo_dashboard.html
+    ├── demo_responses.csv
+    └── demo_word_count.py
+```
+- If files or folders are added, removed, or renamed, update this tree in the same change.
+- Keep this map shallow and practical (main folders plus important project files).
+
+## Project priorities
+- Keep code beginner-friendly and well-structured for class assignments.
+- Favor clarity and readable variable names over clever one-liners.
+- Preserve existing file/folder names unless explicitly asked to rename.
+
+## Python conventions
+- Follow PEP 8 style and include short docstrings for non-trivial functions.
+- Use `utf-8` encoding when reading text/CSV files.
+- Handle missing fields or empty rows defensively when parsing data.
+- Keep scripts runnable from their project folder with relative file paths.
+
+## Data and analysis
+- Never modify source CSV data unless explicitly requested.
+- When adding analysis, include simple summary stats (count/min/max/average when relevant).
+- Keep outputs reproducible and deterministic.
+
+## HTML dashboard conventions
+- Prefer a single standalone `.html` file (HTML/CSS/JS together) unless asked otherwise.
+- Use plain JavaScript and avoid heavy dependencies.
+- Build accessible markup: semantic headings, readable table labels, and clear button text.
+
+## Workflow and safety
+- Do not add secrets, tokens, or credentials to tracked files.
+- Before finalizing changes, run quick sanity checks (script run or file open) when possible.
+- If requirements are unclear, ask a concise clarifying question before major edits.
+- Keep `.cursorrules` synchronized with the current project layout whenever edits change structure.
