@@ -14,7 +14,8 @@ hcde530/
     ├── demo_dashboard.html
     ├── demo_responses.csv
     ├── demo_word_count.py
-    └── reviews.csv
+    ├── reviews.csv
+    └── week2.md
 ```
 - If files or folders are added, removed, or renamed, update this tree in the same change.
 - Keep this map shallow and practical (main folders plus important project files).
