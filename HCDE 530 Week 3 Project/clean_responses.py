@@ -7,6 +7,8 @@ in the "role" column, and writes the cleaned data to responses_cleaned.csv.
 import csv
 
 
+# This function reads the input CSV, removes rows with blank names,
+# normalizes role values to uppercase, and stores cleaned rows.
 def clean_csv_data(input_file: str, output_file: str) -> None:
     """Read CSV input, clean rows, and write cleaned output."""
     with open(input_file, "r", encoding="utf-8", newline="") as infile:
@@ -18,6 +20,8 @@ def clean_csv_data(input_file: str, output_file: str) -> None:
         fieldnames = reader.fieldnames
         cleaned_rows = []
 
+        # Loop through each row and keep only rows with a non-empty name.
+        # For kept rows, convert the role text to uppercase for consistency.
         for row in reader:
             name_value = (row.get("name") or "").strip()
             if not name_value:
@@ -28,6 +32,7 @@ def clean_csv_data(input_file: str, output_file: str) -> None:
 
             cleaned_rows.append(row)
 
+    # Write the original header plus all cleaned rows to the output CSV file.
     with open(output_file, "w", encoding="utf-8", newline="") as outfile:
         writer = csv.DictWriter(outfile, fieldnames=fieldnames)
         writer.writeheader()
