@@ -19,7 +19,11 @@ hcde530/
 └── HCDE 530 Week 3 Project/
     ├── clean_responses.py
     ├── count_roles.py
-    └── responses.csv
+    ├── responses.csv
+    └── homework/
+        ├── week3_analysis_buggy.py
+        ├── week3_survey_messy.csv
+        └── week3.md
 ```
 - If files or folders are added, removed, or renamed, update this tree in the same change.
 - Keep this map shallow and practical (main folders plus important project files).
