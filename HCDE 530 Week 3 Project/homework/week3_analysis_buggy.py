@@ -66,7 +66,12 @@ def parse_int(value):
 # This function counts how many people use each primary tool.
 # It normalizes tool names so small text differences are grouped together.
 def count_primary_tools(survey_rows):
-    """Count how many survey responses report each primary tool."""
+    """Count how many survey responses report each primary tool.
+
+    Returns a dictionary mapping each tool name (title-cased) to the number
+    of survey responses that listed it as their primary tool. Responses with
+    a missing or empty tool name are grouped under \"Unknown\".
+    """
     tool_counts = {}
 
     for row in survey_rows:
@@ -80,6 +85,73 @@ def count_primary_tools(survey_rows):
             tool_counts[tool] = 1
 
     return tool_counts
+
+
+def export_figma_users(survey_rows, input_filename, output_filename="week3_figma_only.csv"):
+    """Extract all Figma users from survey data and write them to a new CSV file.
+
+    Iterates over the provided survey rows and keeps only rows where the
+    "primary_tool" field normalizes to "Figma" (case-insensitive, whitespace
+    stripped). The matching rows are written to a new CSV file using the same
+    column headers as the original file.
+
+    Args:
+        survey_rows (list[dict]): A list of row dictionaries as returned by
+            csv.DictReader, representing the full survey dataset.
+        input_filename (str): Path to the original CSV file, used to read the
+            fieldnames for the output file header.
+        output_filename (str): Path for the output CSV file containing only
+            Figma users. Defaults to "week3_figma_only.csv".
+
+    Returns:
+        list[dict]: The list of rows where the primary tool is Figma.
+    """
+    figma_rows = [
+        row for row in survey_rows
+        if (row.get("primary_tool") or "").strip().lower() == "figma"
+    ]
+
+    with open(input_filename, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        fieldnames = reader.fieldnames
+
+    with open(output_filename, "w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(figma_rows)
+
+    print(f"\nFigma users written to '{output_filename}' "
+          f"({len(figma_rows)} rows).")
+
+    return figma_rows
+
+
+def summarize_data(rows):
+    """Return a plain-language summary of key statistics for the given rows.
+
+    Computes two metrics from the provided dataset:
+    - Total number of rows (responses).
+    - Number of rows where the "participant_name" field is missing or blank.
+
+    Args:
+        rows (list[dict]): A list of row dictionaries, typically as returned by
+            csv.DictReader or by export_figma_users.
+
+    Returns:
+        str: A multi-line plain-language summary string ready to be printed.
+    """
+    row_count = len(rows)
+
+    empty_name_count = sum(
+        1 for row in rows
+        if not (row.get("participant_name") or "").strip()
+    )
+
+    summary_lines = [
+        f"Total responses: {row_count}",
+        f"Responses with missing name: {empty_name_count}",
+    ]
+    return "\n".join(summary_lines)
 
 
 # Load the survey data from a CSV file
@@ -142,3 +214,10 @@ top5 = scored_rows[:5]
 print("\nTop 5 satisfaction scores:")
 for name, score in top5:
     print(f"  {name}: {score}")
+
+# Extract Figma users and export them to a new CSV file.
+figma_rows = export_figma_users(rows, filename)
+
+# Print a plain-language summary of the Figma-user data.
+print("\nSummary of Figma user data:")
+print(summarize_data(figma_rows))
