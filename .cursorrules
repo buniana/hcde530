@@ -18,6 +18,7 @@ hcde530/
 │   └── week2.md
 └── HCDE 530 Week 3 Project/
     ├── clean_responses.py
+    ├── count_roles.py
     └── responses.csv
 ```
 - If files or folders are added, removed, or renamed, update this tree in the same change.
