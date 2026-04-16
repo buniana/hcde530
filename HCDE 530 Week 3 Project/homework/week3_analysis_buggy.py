@@ -1,6 +1,6 @@
 import csv
 
-
+# This dictionary maps number words to their integer values.
 WORD_TO_INT = {
     "zero": 0,
     "one": 1,
@@ -24,6 +24,8 @@ WORD_TO_INT = {
     "nineteen": 19,
 }
 
+# This dictionary maps tens number words to their integer values.
+# It supports values like "twenty" or "thirty".
 TENS_TO_INT = {
     "twenty": 20,
     "thirty": 30,
@@ -35,12 +37,10 @@ TENS_TO_INT = {
     "ninety": 90,
 }
 
-
 # This function safely turns text into an integer.
 # It accepts digits (like "12") and number words (like "fifteen" or "forty two").
 # If a value cannot be converted, it returns None instead of crashing.
 def parse_int(value):
-    """Convert numeric text or number words to int."""
     text = (value or "").strip().lower()
     if not text:
         return None
@@ -63,13 +63,31 @@ def parse_int(value):
     return None
 
 
+# This function counts how many people use each primary tool.
+# It normalizes tool names so small text differences are grouped together.
+def count_primary_tools(survey_rows):
+    """Count how many survey responses report each primary tool."""
+    tool_counts = {}
+
+    for row in survey_rows:
+        tool = (row.get("primary_tool") or "").strip().title()
+        if not tool:
+            tool = "Unknown"
+
+        if tool in tool_counts:
+            tool_counts[tool] += 1
+        else:
+            tool_counts[tool] = 1
+
+    return tool_counts
+
+
 # Load the survey data from a CSV file
 filename = "week3_survey_messy.csv"
 rows = []
 
 with open(filename, newline="", encoding="utf-8") as f:
     reader = csv.DictReader(f)
-    # This loop reads each survey row from the CSV and stores it in memory.
     for row in reader:
         rows.append(row)
 
@@ -77,7 +95,6 @@ with open(filename, newline="", encoding="utf-8") as f:
 # Normalize role names so "ux researcher" and "UX Researcher" are counted together
 role_counts = {}
 
-# This loop groups people by normalized role name and counts each role.
 for row in rows:
     role = row["role"].strip().title()
     if role in role_counts:
@@ -86,14 +103,18 @@ for row in rows:
         role_counts[role] = 1
 
 print("Responses by role:")
-# This loop prints the final role counts in alphabetical order by role name.
 for role, count in sorted(role_counts.items()):
     print(f"  {role}: {count}")
+
+# Count and print how many people use each primary tool.
+primary_tool_counts = count_primary_tools(rows)
+print("\nResponses by primary tool:")
+for tool, count in sorted(primary_tool_counts.items()):
+    print(f"  {tool}: {count}")
 
 # Calculate the average years of experience
 total_experience = 0
 valid_experience_count = 0
-# This loop converts experience values to numbers and keeps only valid entries.
 for row in rows:
     years = parse_int(row.get("experience_years"))
     if years is not None:
@@ -108,7 +129,6 @@ else:
 
 # Find the top 5 highest satisfaction scores
 scored_rows = []
-# This loop converts satisfaction scores and saves valid (name, score) pairs.
 for row in rows:
     score = parse_int(row.get("satisfaction_score"))
     if score is not None:
@@ -118,7 +138,7 @@ for row in rows:
 scored_rows.sort(key=lambda x: x[1], reverse=True)
 top5 = scored_rows[:5]
 
-print("\nTop 5 satisfaction scores:")
 # This loop prints the highest 5 satisfaction scores after sorting.
+print("\nTop 5 satisfaction scores:")
 for name, score in top5:
     print(f"  {name}: {score}")
