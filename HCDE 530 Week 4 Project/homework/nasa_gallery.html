@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Earth From Space — NASA Gallery</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;1,300&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --black: #080a0f;
+      --white: #f0ede6;
+      --accent: #4af0a0;
+      --dim: rgba(240, 237, 230, 0.45);
+      --card-bg: rgba(255,255,255,0.04);
+      /* Space for fixed nav (inner padding + bar + border); tweak if nav wraps */
+      --site-nav-height: 52px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      overflow-x: hidden;
+      /* Keep main content below fixed nav */
+      padding-top: var(--site-nav-height);
+    }
+
+    /* Top homework nav — matches header / label typography */
+    .site-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(8, 10, 15, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .site-nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 14px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .nav-course {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 11px;
+      font-weight: 400;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--white);
+    }
+
+    .nav-course::before {
+      content: '';
+      width: 3px;
+      height: 22px;
+      border-radius: 2px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+
+    .nav-author {
+      font-size: 13px;
+      font-style: italic;
+      color: var(--dim);
+      letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 640px) {
+      :root {
+        --site-nav-height: 84px;
+      }
+    }
+
+    /* Starfield background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        radial-gradient(1px 1px at 10% 15%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 25% 40%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 50% 20%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 70% 60%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 85% 10%, rgba(255,255,255,0.6) 0%, transparent 100%),
+        radial-gradient(1px 1px at 92% 75%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 38% 80%, rgba(255,255,255,0.3) 0%, transparent 100%),
+        radial-gradient(1px 1px at 60% 90%, rgba(255,255,255,0.5) 0%, transparent 100%),
+        radial-gradient(1px 1px at 5% 65%, rgba(255,255,255,0.4) 0%, transparent 100%),
+        radial-gradient(1px 1px at 78% 35%, rgba(255,255,255,0.3) 0%, transparent 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px 32px 80px;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 60px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding-bottom: 24px;
+    }
+
+    .header-left .label {
+      font-size: 11px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(52px, 8vw, 96px);
+      line-height: 0.9;
+      letter-spacing: 0.02em;
+      color: var(--white);
+    }
+
+    .header-right {
+      text-align: right;
+      font-size: 12px;
+      color: var(--dim);
+      font-style: italic;
+      line-height: 1.6;
+    }
+
+    /* Main image card */
+    .main-card {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16/9;
+      border-radius: 4px;
+      overflow: hidden;
+      margin-bottom: 28px;
+      background: #111;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+
+    .main-card.loaded {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .main-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    /* Overlay gradient on image */
+    .main-card::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        transparent 40%,
+        rgba(8, 10, 15, 0.85) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* NASA ID badge */
+    .nasa-badge {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 2;
+      background: rgba(8,10,15,0.7);
+      border: 1px solid rgba(74, 240, 160, 0.3);
+      color: var(--accent);
+      font-size: 10px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      border-radius: 2px;
+      backdrop-filter: blur(8px);
+    }
+
+    /* Info section below image */
+    .info-row {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 32px;
+      align-items: start;
+      margin-bottom: 40px;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.6s ease 0.3s, transform 0.6s ease 0.3s;
+    }
+
+    .info-row.loaded {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .image-title {
+      font-family: 'Bebas Neue', sans-serif;
+      font-size: clamp(24px, 4vw, 42px);
+      line-height: 1;
+      letter-spacing: 0.03em;
+      color: var(--white);
+      margin-bottom: 12px;
+    }
+
+    .image-description {
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--dim);
+      line-height: 1.7;
+      max-width: 680px;
+    }
+
+    .meta-block {
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .meta-item {
+      margin-bottom: 12px;
+    }
+
+    .meta-label {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 3px;
+    }
+
+    .meta-value {
+      font-size: 13px;
+      color: var(--white);
+      font-weight: 300;
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+    }
+
+    .btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.2);
+      color: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 12px 28px;
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s ease;
+    }
+
+    .btn:hover {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--black);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--black);
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background: transparent;
+      color: var(--accent);
+    }
+
+    .counter {
+      font-size: 12px;
+      color: var(--dim);
+      letter-spacing: 0.1em;
+      margin-left: auto;
+    }
+
+    /* Thumbnail strip */
+    .thumb-strip {
+      margin-top: 48px;
+      padding-top: 32px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .thumb-label {
+      font-size: 10px;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--dim);
+      margin-bottom: 16px;
+    }
+
+    .thumbs {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 8px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.1) transparent;
+    }
+
+    .thumb {
+      flex-shrink: 0;
+      width: 100px;
+      height: 65px;
+      border-radius: 3px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: border-color 0.2s, opacity 0.2s;
+      opacity: 0.5;
+    }
+
+    .thumb:hover { opacity: 0.9; }
+    .thumb.active { border-color: var(--accent); opacity: 1; }
+
+    .thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Loading state */
+    .loading-msg {
+      text-align: center;
+      padding: 120px 0;
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    .loading-msg span {
+      display: inline-block;
+      animation: pulse 1.5s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 1; }
+    }
+
+    /* Error state */
+    .error-msg {
+      text-align: center;
+      padding: 80px 0;
+      color: var(--dim);
+      line-height: 1.8;
+    }
+
+    .error-msg code {
+      display: inline-block;
+      background: var(--card-bg);
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 2px 8px;
+      border-radius: 3px;
+      font-size: 13px;
+      color: var(--accent);
+    }
+  </style>
+</head>
+<body>
+  <nav class="site-nav" aria-label="Course">
+    <div class="site-nav-inner">
+      <span class="nav-course">HCDE 530 Week 4 Homework</span>
+      <span class="nav-author">Lina (Jiayu) Wang</span>
+    </div>
+  </nav>
+  <div class="container">
+    <header>
+      <div class="header-left">
+        <div class="label">NASA Image Library</div>
+        <h1>Earth<br>From Space</h1>
+      </div>
+      <div class="header-right">
+        Imagery courtesy of<br>NASA Image & Video Library<br>images.nasa.gov
+      </div>
+    </header>
+
+    <div id="app">
+      <div class="loading-msg"><span>Loading imagery...</span></div>
+    </div>
+  </div>
+
+  <script>
+    let gallery = [];
+    let currentIndex = 0;
+
+    // Render the current image and its metadata
+    function render() {
+      const app = document.getElementById('app');
+      const item = gallery[currentIndex];
+
+      app.innerHTML = `
+        <div class="main-card" id="mainCard">
+          <img src="${item.image_url}" alt="${item.title}" onload="onImageLoad()" onerror="onImageError()"/>
+          <div class="nasa-badge">${item.nasa_id}</div>
+        </div>
+
+        <div class="info-row" id="infoRow">
+          <div>
+            <div class="meta-label" style="margin-bottom: 10px;">📅 &nbsp;${item.date || 'Unknown date'}</div>
+            <div class="image-description">${item.description.slice(0, 400)}${item.description.length > 400 ? '...' : ''}</div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="btn" onclick="prev()">← Prev</button>
+          <button class="btn btn-primary" onclick="random()">↺ Random</button>
+          <button class="btn" onclick="next()">Next →</button>
+          <span class="counter">${currentIndex + 1} / ${gallery.length}</span>
+        </div>
+
+        <div class="thumb-strip">
+          <div class="thumb-label">All images — click to view</div>
+          <div class="thumbs" id="thumbs">
+            ${gallery.map((g, i) => `
+              <div class="thumb ${i === currentIndex ? 'active' : ''}" onclick="goTo(${i})">
+                <img src="${g.image_url}" alt="${g.title}" loading="lazy"/>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      // Scroll active thumbnail into view
+      setTimeout(() => {
+        const active = document.querySelector('.thumb.active');
+        if (active) active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+      }, 100);
+    }
+
+    function onImageLoad() {
+      document.getElementById('mainCard')?.classList.add('loaded');
+      document.getElementById('infoRow')?.classList.add('loaded');
+    }
+
+    function onImageError() {
+      // If image fails to load, skip to next one
+      next();
+    }
+
+    function next() {
+      currentIndex = (currentIndex + 1) % gallery.length;
+      render();
+    }
+
+    function prev() {
+      currentIndex = (currentIndex - 1 + gallery.length) % gallery.length;
+      render();
+    }
+
+    function random() {
+      let newIndex;
+      do { newIndex = Math.floor(Math.random() * gallery.length); }
+      while (newIndex === currentIndex && gallery.length > 1);
+      currentIndex = newIndex;
+      render();
+    }
+
+    function goTo(index) {
+      currentIndex = index;
+      render();
+    }
+
+    // Load the gallery JSON file that the Python script generates
+    fetch('nasa_gallery.json')
+      .then(res => {
+        if (!res.ok) throw new Error('not found');
+        return res.json();
+      })
+      .then(data => {
+        if (!data || data.length === 0) throw new Error('empty');
+        gallery = data;
+        // Start on a random image each page load
+        currentIndex = Math.floor(Math.random() * gallery.length);
+        render();
+      })
+      .catch(() => {
+        document.getElementById('app').innerHTML = `
+          <div class="error-msg">
+            <p>Couldn't find <code>nasa_gallery.json</code></p>
+            <br>
+            <p>Run <code>python nasa_images.py</code> first to generate the data file,<br>
+            then open this HTML file again.</p>
+          </div>
+        `;
+      });
+
+    // Keyboard navigation
+    document.addEventListener('keydown', e => {
+      if (e.key === 'ArrowRight') next();
+      if (e.key === 'ArrowLeft') prev();
+      if (e.key === 'r' || e.key === 'R') random();
+    });
+  </script>
+</body>
+</html>
