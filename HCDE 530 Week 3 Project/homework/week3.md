@@ -8,7 +8,9 @@ This week helped me understand debugging and the basic structure of Python code 
 
 In this week’s assignment, I used vibe-coding to build and improve Python scripts for cleaning messy CSV data. I practiced handling missing values, normalizing text fields, and fixing value format issues that caused scripts to break.
 
-The buggy example was especially useful for C3 because it showed me that AI-generated cleaning steps can still introduce bugs. I learned I need to read both the function logic and the dataset more carefully before trusting output.
+The buggy example was especially useful for C3. The first bug was a `ValueError` caused by the value `"fifteen"` being stored as a string instead of an integer — when `int()` tried to convert it, it threw a `ValueError` and broke the script. To fix this, I wrote a new helper function that normalizes inputs (whether they come in as text or integers) into actual integers before passing them into the original function. The second bug was the top 5 scores not returning the highest values, which I fixed in the same commit by correcting the sort logic.
+
+These bugs showed me that AI-generated cleaning steps can still introduce subtle errors. I learned I need to read both the function logic and the dataset more carefully before trusting the output.
 
 ### C7: Critical evaluation and professional judgment
 
