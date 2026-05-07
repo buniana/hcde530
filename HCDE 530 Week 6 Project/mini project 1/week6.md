@@ -28,6 +28,26 @@ The second chart is a line chart that plots average stress score across activity
 
 ---
 
+### Chart Justification
+
+#### Chart 1 — Grouped bar chart: Stress and anxiety by course group (Q1)
+
+**Research question answered:** How does stress differ by course context?
+
+A grouped bar chart was the right choice here because Q1 involves comparing two separate numeric measures — stress and anxiety — across three categorical groups (A1, A2, B). Grouping the bars side by side makes two comparisons immediately readable at a glance: how stress and anxiety relate within each course, and how each course stacks up against the others. A stacked bar would have obscured the individual measures; separate charts would have required the reader to flip between them. The y-axis is fixed to 0–100 to match the actual survey scale, which prevents visually exaggerating small numerical differences.
+
+This chart directly answers Q1 because it shows, in one view, whether course context is a meaningful factor in student stress. If the bars were all roughly equal height across A1, A2, and B, the conclusion would be that course group does not matter much. Visible differences between groups — which the chart reveals — establishes that course environment itself is a factor worth accounting for before moving to behavioral predictors in Q2 and Q3.
+
+#### Chart 2 — Multi-line chart: Average stress by behavioral quartile (Q2 + Q3)
+
+**Research question answered:** Which daily behavior — physical activity or sleep quality — is more strongly associated with lower student stress?
+
+A line chart with markers was chosen because the x-axis represents an ordered scale — quartiles from lowest to highest behavior — not arbitrary categories. Lines communicate directionality and trend across ordered values better than bars do; the slope of each line is itself the finding. Bars would have made the direction harder to read because they emphasize magnitude at each point rather than the change between points.
+
+Plotting both behavioral predictors (physical activity and sleep quality) as separate colored lines on the same axes was a deliberate choice to answer Q3's comparative claim in a single visual. If the lines were in separate charts, the reader would have to mentally compare slopes across two figures. On the same chart, the steeper downward line is immediately identifiable as the stronger predictor — which directly and visually answers the central research question: which daily behavior matters more for student stress? The x-axis tick labels (Q1 low → Q4 high) reinforce the direction of the scale so the chart is self-explanatory without needing to read the surrounding text.
+
+---
+
 ### C1: Vibecoding and rapid prototyping
 
 Vibecoding was present throughout this project, but in a more deliberate form than generating code from scratch. Before writing any pandas code, I used Claude to think through the data cleaning plan — describing the structure of the dataset (35 folders, 7 file types, inconsistent timestamps, incomplete participants) and working out which issues needed to be addressed and in what order. This planning conversation shaped the entire structure of Section 2: the decision to exclude students 3, 12, and 14 from sensor analyses, the order of loading and cleaning steps, and the logic for the daily-level merge all came out of that planning phase.
