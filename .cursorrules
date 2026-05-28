@@ -7,6 +7,8 @@ This rule applies to all work in this repository.
 hcde530/
 ├── .cursorrules
 ├── .gitignore
+├── README.md
+├── requirements.txt
 ├── HCDE 530 Week 2 Project/
 │   ├── README.md
 │   ├── PROJECT_CONTEXT.md
@@ -16,14 +18,58 @@ hcde530/
 │   ├── demo_word_count.py
 │   ├── reviews.csv
 │   └── week2.md
-└── HCDE 530 Week 3 Project/
-    ├── clean_responses.py
-    ├── count_roles.py
-    ├── responses.csv
-    └── homework/
-        ├── week3_analysis_buggy.py
-        ├── week3_survey_messy.csv
-        └── week3.md
+├── HCDE 530 Week 3 Project/
+│   ├── clean_responses.py
+│   ├── count_roles.py
+│   ├── responses.csv
+│   ├── responses_cleaned.csv
+│   └── homework/
+│       ├── week3.md
+│       ├── week3_analysis_buggy.py
+│       ├── week3_figma_only.csv
+│       └── week3_survey_messy.csv
+├── HCDE 530 Week 4 Project/
+│   ├── category_helpful_votes.csv
+│   ├── fetch_category_helpful_votes.py
+│   ├── fetch_rating_date.py
+│   ├── rating_date.csv
+│   └── homework/
+│       ├── week4.md
+│       ├── nasa_image.py
+│       ├── nasa_gallery.html
+│       ├── nasa_gallery.json
+│       ├── nasa_results.json
+│       └── requirements.txt
+├── HCDE 530 Week 5 Project/
+│   ├── app_info.csv
+│   ├── app_reviews_demo.csv
+│   ├── reviews_mini.csv
+│   ├── week5_inclass_activity.ipynb
+│   ├── week5_merge_demo.ipynb
+│   ├── week5_pandas_demo.ipynb
+│   └── homework/
+│       ├── week5.md
+│       ├── week5_homework.ipynb
+│       └── category_helpful_votes.csv
+├── HCDE 530 Week 6 Project/
+│   ├── bird_strikes.csv
+│   ├── clean_ufo_data.csv
+│   ├── plotly-exercises.ipynb
+│   ├── tidy_data_exercise.ipynb
+│   └── mini project 1/
+│       ├── week6.md
+│       ├── week6_mp1_starter.ipynb
+│       ├── chart1_stress_by_course.png
+│       ├── chart2_stress_by_behavior_quartile.png
+│       └── SSAQS dataset/
+├── HCDE 530 Week 7 Project/
+│   └── week7_figma_feedback.csv
+└── HCDE 530 Mini Project 1/
+    ├── mp1.md
+    ├── mp1.ipynb
+    ├── chart1_stress_by_course.png
+    ├── chart2_stress_by_behavior_quartile.png
+    └── SSAQS dataset/
 ```
 - If files or folders are added, removed, or renamed, update this tree in the same change.
 - Keep this map shallow and practical (main folders plus important project files).
@@ -38,11 +84,19 @@ hcde530/
 - Use `utf-8` encoding when reading text/CSV files.
 - Handle missing fields or empty rows defensively when parsing data.
 - Keep scripts runnable from their project folder with relative file paths.
+- Use the repo-level `requirements.txt` when adding shared dependencies; add a folder-level `requirements.txt` only when a project needs extras (see Week 4 homework).
 
 ## Data and analysis
 - Never modify source CSV data unless explicitly requested.
 - When adding analysis, include simple summary stats (count/min/max/average when relevant).
 - Keep outputs reproducible and deterministic.
+- Save generated charts as `.png` next to the notebook/script that produced them, and use descriptive filenames (e.g. `chart1_stress_by_course.png`).
+
+## Jupyter notebook conventions
+- Use notebooks (`.ipynb`) for weekly exercises and mini projects that involve pandas/plotly exploration.
+- Structure notebooks with clear markdown headers: load data → clean → analyze → visualize → summary.
+- Keep cells short and focused; prefer many small cells over a few long ones.
+- Clear or re-run cells before committing so outputs reflect the current code.
 
 ## HTML dashboard conventions
 - Prefer a single standalone `.html` file (HTML/CSS/JS together) unless asked otherwise.
