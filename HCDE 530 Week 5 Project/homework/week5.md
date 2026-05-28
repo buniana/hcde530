@@ -1,80 +1,45 @@
-# Week 5 — Competency Claim: C1, C3, C5, C7
+# Week 5 — Competency Claim: C3, C5, C7
 
 ## Observations
 
-This week focused on using pandas to explore and analyze structured datasets. I worked with two datasets — `app_reviews_demo.csv` (used during the in-class activity) and `category_helpful_votes.csv` (used in the homework notebook) — and ran a series of operations to understand their shape, distributions, and patterns. The merge demo also introduced a new technique for combining two tables that each hold partial information.
+This week focused on using pandas to explore and analyze structured datasets. I worked with two datasets — `app_reviews_demo.csv` (in-class activity) and `category_helpful_votes.csv` (homework notebook) — and used pandas operations to answer specific questions about each one.
 
 ---
 
-### C1: Vibecoding and rapid prototyping
+### C3: Data Handling through loading, reshaping, and summarizing
 
-The Jupyter notebooks this week were built using AI-assisted vibe-coding. I described what I wanted in plain English — for example, "show me the average helpful votes grouped by category, sorted from highest to lowest" — and used that description to generate working pandas code. The result was a functioning, runnable notebook (`week5_homework.ipynb`) without having to write every line from scratch.
-
-This competency also showed up in the merge demo (`week5_merge_demo.ipynb`), where the notebook demonstrates exactly how to write a strong prompt to an AI agent: stating both DataFrame names, listing their columns, naming the shared join key, and specifying the join type. That precision is what makes vibe-coding reliable rather than hit-or-miss.
-
-**Key files:** `week5_homework.ipynb`, `week5_merge_demo.ipynb`
-
----
-
-### C3: Data handling through loading, reshaping, and summarizing
-
-Across both the in-class activity and the homework notebook, I used pandas to load CSV files and systematically answer questions about the data:
+Across both notebooks I used five pandas operations to systematically answer questions:
 
 - `df.head()` and `df.info()` to inspect shape, column types, and completeness
-- `df['column'].value_counts()` to summarize how values are distributed
-- Boolean filtering (`df[df['helpful_votes'] >= 40]`) to isolate a meaningful subset
-- `df.groupby('category')['helpful_votes'].mean()` to aggregate numeric values by group
-- `df.isnull().sum()` to identify and quantify missing values
+- `df['helpful_votes'].value_counts()` to see how helpfulness ratings are distributed across reviews
+- `df[df['helpful_votes'] >= 40]` to filter to the 86 most community-validated reviews
+- `df.groupby('category')['helpful_votes'].mean()` to aggregate by tool type
+- `df.isnull().sum()` to check for missing data
 
-The homework dataset (`category_helpful_votes.csv`, 500 rows, 2 columns) was simple and clean, which let me practice each operation clearly. The in-class dataset (`app_reviews_demo.csv`, 500 rows, 10 columns) was richer and more realistic — it had two incomplete columns (`device_type` missing 12.6%, `app_version` missing 22.2%), which made the missing value check more meaningful.
+The homework dataset (`category_helpful_votes.csv`, 500 rows, 2 columns) was complete and clean — `isnull().sum()` returned 0 for both columns — which let me focus on the analytical operations without cleanup. The in-class dataset (`app_reviews_demo.csv`, 500 rows, 10 columns) had two incomplete columns (`device_type` missing 12.6%, `app_version` missing 22.2%), which made the missing value check more consequential.
 
-The merge demo added a reshaping step not covered in the five-question activity: combining two tables on a shared key (`app_id`) so that review data and app metadata could be analyzed together. This is a common real-world pattern whenever data is stored across multiple files.
+The merge demo added a step not in the five-question activity: combining two tables on a shared key (`app_id`) so that review data and app metadata could be analyzed together — a common pattern when data is stored across multiple files.
 
 **Key files:** `week5_inclass_activity.ipynb`, `week5_homework.ipynb`, `week5_merge_demo.ipynb`, `category_helpful_votes.csv`, `app_reviews_demo.csv`
 
 ---
 
-### C5: Visualization — Producing clear, labeled summaries of data patterns
+### C5: Data Analysis with Pandas
 
-This is the most directly practiced competency this week. Each notebook produces outputs that make data patterns visible, and every output is paired with a markdown cell that labels and explains what it shows. This combination — a clear output plus a plain-English interpretation — is the core of producing a useful data visualization.
+`week5_homework.ipynb` loads `category_helpful_votes.csv` and answers five analytical questions. The most substantive result came from Question 4: grouping by tool category and computing average helpful votes showed that collaborative whiteboard tools (avg 25.1) and research repositories (avg 24.6) consistently get higher community validation than usability testing (22.0) or user research tools (21.9). That gap is likely because tool selection in those categories involves higher stakes — reviewers go into more depth, and readers find that detail more useful.
 
-Specific examples:
+Question 3 (filtering to 40+ helpful votes) returned 86 rows. Collaborative whiteboard and user research entries appear frequently in that subset, which aligns with the groupby result — the same categories produce both the highest averages and the most individually outstanding reviews.
 
-**Rating distribution table** (in-class activity, Question 2): A count-and-percentage table showing that 5-star reviews make up 41.4% of the dataset and 1-star reviews only 5.8%. The markdown cell below it explains the positivity skew and why this matters: "a 'low' average of 3.67 actually represents a meaningful drop from the norm." A raw number without this framing looks different to a UX researcher than it does to someone familiar with skewed review datasets.
-
-**Average rating by app** (in-class activity, Question 4): A grouped mean table showing Dovetail at 4.12 and Fieldkit at 3.67. The interpretation cell notes that all five apps have similar review counts (89–121), so the difference in means is not simply a sample-size effect — a detail that matters when deciding whether to act on the finding.
-
-**Missing value summary** (in-class activity, Question 5): A two-row table showing exactly which columns are incomplete and by what percentage. The markdown cell explains the practical consequence: dropping `app_version` rows silently would remove 22% of the data, which is not a safe default.
-
-**Helpful votes by category** (homework, Question 4): A sorted grouped-mean table showing which tool category tends to generate the most community-validated reviews. The markdown explanation connects this back to what the numbers might mean in a UX context — higher stakes in tool selection, more detailed review content, or a more engaged reviewer base.
-
-The through-line across all of these is that a table or aggregation alone is not a visualization in the useful sense — it becomes one when it is labeled, sorted, and accompanied by an explanation of what the reader should take away. Every output in both notebooks follows this pattern.
+Question 5 confirmed the dataset is complete: 0 missing values in either column, so no rows needed to be dropped or filled before analysis.
 
 **Key files:** `week5_inclass_activity.ipynb`, `week5_homework.ipynb`
 
 ---
 
-### C7: Critical evaluation and professional judgment
+### C7: Critical Evaluation and Professional Judgment
 
-Across both notebooks, the markdown interpretation cells required me to think past the output and ask: what does this actually mean for a UX researcher or product team? This is not automatic — pandas returns numbers, and translating numbers into insight requires judgment.
+When AI generated the initial groupby code for Question 4, the first version sorted in ascending order — putting the lowest-performing category at the top. The numbers were correct but the ordering was the opposite of what's useful for identifying which category performs best. I caught this by reading the output before treating it as done and corrected the sort direction. This is a small example of a consistent pattern: AI produces syntactically correct code that still requires checking for analytical correctness.
 
-A few specific moments where this showed up:
-
-- Recognizing that the positivity skew in ratings means averages are not neutral — a 3.67 average signals real dissatisfaction in a dataset where the typical score is 4+.
-- Noting that the 72 negative reviews (14.4%) are disproportionately important relative to their volume, because they tend to name specific, actionable friction points.
-- Flagging that `app_version` being 22.2% missing is not a minor data quality issue — it is large enough to meaningfully affect any version-based analysis and should not be silently dropped.
-- In the merge demo, applying professional judgment to explain *when* to use a merge: when data is split across files with a shared key, which is a common real-world pattern in participant data, survey results, and tool logs.
+In the in-class activity I also flagged that `app_version` being 22.2% missing is not a minor issue — silently dropping those rows would remove more than one in five records and meaningfully skew any version-based analysis. That consequence only shows up when you interpret the output rather than just run the cell.
 
 **Key files:** `week5_inclass_activity.ipynb`, `week5_homework.ipynb`
-
----
-
-### Challenges
-
-The main challenge was making the interpretation cells genuinely useful rather than just restating the output. It's easy to write "Dovetail has the highest average rating (4.12)" — it's harder to add the next sentence that explains why that matters or what caveat a reader should keep in mind. That second sentence is where the C7 judgment actually lives.
-
----
-
-### Where I want to grow next
-
-C5 felt partial this week because the "visualizations" were tabular summaries rather than charts. Next, I want to produce actual plots — bar charts, histograms, or scatter plots — using matplotlib or seaborn, with proper axis labels and titles. That would make the C5 demonstration more complete and would be useful for any future MP work where data needs to be communicated visually to an audience rather than just read in a notebook.
