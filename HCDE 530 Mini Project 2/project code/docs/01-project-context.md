@@ -1,0 +1,102 @@
+# IdeaFlow — Project Context & Goals
+
+## What is IdeaFlow?
+IdeaFlow is an AI-powered ideation toolkit for UX designers. It guides users through a structured two-phase ideation session:
+1. **HMW Generation** — converts pain points or research findings into How Might We questions
+2. **Crazy 8s Session** — a timed brainstorm where users generate 8 ideas in 8 rounds, guided by AI-generated prompts
+
+The experience should feel like a live workshop tool — energetic, focused, and structured — similar in spirit to FigJam, Miro, and Kahoot.
+
+---
+
+## Who uses it?
+- **Primary:** UX designers and design students working solo
+- **Secondary:** Small design teams (2–8 people) running ideation workshops
+- Users may arrive with raw research notes, pain points, or an already-formed HMW question
+
+---
+
+## The Two Entry Points
+Always support both entry paths. Never assume the user starts from scratch.
+
+### Path A — From Pain Points
+1. User provides target user, age range, and three research fields (insight, desired outcome, scope)
+2. Tool generates HMW questions clustered by theme
+3. User selects and edits one HMW to carry into Crazy 8s
+
+### Path B — Direct HMW Input
+1. User types their own HMW question directly
+2. Tool skips generation and goes straight into Crazy 8s
+3. No AI generation needed for this path — respect the user's framing
+
+---
+
+## Design Principles
+- **Speed over perfection** — the tool should feel fast and frictionless
+- **Structure without rigidity** — guide the user but don't trap them
+- **Bold thinking** — prompts and UI should encourage divergent, ambitious ideas
+- **Organized output** — users should leave with something usable, not a mess
+
+---
+
+## Interaction Logic
+
+### Round lifecycle
+Each of the 8 rounds follows the same pattern:
+- Timer counts down from the chosen preset (60 / 90 / 120s)
+- User types an idea in the inline textarea
+- On timer expiry: draft is auto-saved as a round entry (even if empty), next round begins
+- Round entry shape: `{ id, roundCaptured, description, title, aiGenerated, isDraft }`
+
+### Manual round advance ("Next round")
+- If the draft textarea **has text**: shows "Move to the next round now?" → confirm saves and advances
+- If the draft textarea **is empty**: shows a warning — "Your idea box is empty. This round will be saved without an idea. You can use AI to fill it in later on the summary screen." → "Skip anyway" / "Keep writing"
+- Either path saves one entry per round (even empty ones)
+
+### End session early
+- If draft **has text**: saves the current round entry, then navigates to Summary
+- If draft **is empty**: does NOT save an entry for the current round — navigates directly to Summary
+- This is intentional: empty end-early rounds are discarded so the summary isn't cluttered with meaningless blanks
+
+### Timer expiry vs. end-early distinction
+| Trigger | Empty draft behavior |
+|---------|---------------------|
+| Timer hits zero | Saves empty entry (AI can fill later) |
+| "End session early" confirmed | Discards the round entirely |
+| "Next round" confirmed (skip anyway) | Saves empty entry (AI can fill later) |
+
+### Pause / Resume
+The timer can be paused at any point during a round. It freezes exactly where it stopped and resumes from the same value. Pause does not affect the saved draft.
+
+### AI suggest (in-round)
+- Available any time during a round via the "AI suggest" button in the idea input header
+- Opens a non-blocking modal — timer keeps running while the modal is open
+- Three outcomes:
+  - **Keep this** — AI idea saved directly to the Idea Queue with an AI badge; user's draft is untouched
+  - **Edit this** — AI description copied into the draft textarea; user takes ownership, no AI badge at round-end
+  - **Dismiss** — modal closes, nothing changes
+
+### Summary: AI fill for empty rounds
+- On arrival at the Summary screen, any round entry with a description but no title gets an auto-generated title (non-blocking, skeleton loader shown)
+- A banner appears if any entries have an empty description: "X round(s) without an idea — Let AI fill in the blanks"
+- "Fill with AI" fills all empty rounds simultaneously using each round's original prompt as context
+- Individual "AI fill" buttons on each empty card allow per-card filling
+- AI-filled cards receive an AI badge and are no longer marked as drafts
+
+---
+
+## Out of Scope (for now)
+- Real-time multiplayer / live collaboration
+- Sketch or image upload (stretch goal only)
+- User accounts or authentication
+- Persistent session storage (sessions reset on page reload; export is client-side only)
+
+---
+
+## Documentation Maintenance Rule
+**After every iteration that modifies screen behavior, update these three files:**
+- `docs/01-project-context.md` — Interaction Logic section
+- `docs/06-user-flow.md` — Full flow diagram + Key Interaction Rules
+- `docs/07-information-architecture.md` — Affected screen sections + Content Hierarchy table
+
+This keeps documentation in sync with the implementation and prevents stale specs from misleading future work.
