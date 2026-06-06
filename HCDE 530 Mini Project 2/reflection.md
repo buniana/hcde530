@@ -1,0 +1,25 @@
+# MP2 Reflection — IdeaFlow
+
+## What did I build?
+
+IdeaFlow is an AI-powered ideation tool for UX designers, deployed at https://mini-project-web-app-zppa.bolt.host. It guides users through a two-phase structured session. In the first phase, users answer five questions about their target user and research findings — one at a time in a step-by-step intake — and the tool generates a set of "How Might We" design challenge questions grouped by theme. The user selects and edits one question to carry into the second phase: a Crazy 8s brainstorm, where they generate one idea per round across eight timed rounds. Each round has an AI-generated prompt, an in-round AI suggestion available on demand, and auto-save behavior so nothing is lost when time runs out. At the end, all ideas appear on a summary screen where the user can edit, fill empty rounds with AI, and export the session as a plain text file. Users who already have a design challenge can skip the generation phase and start directly from Crazy 8s.
+
+## What decisions did I make?
+
+The original declaration described a multi-user tool — the intent was for small design teams to run sessions together in real time. This was cut early once it became clear that real-time collaboration requires infrastructure (presence, conflict resolution, shared state sync) that Bolt cannot provide without significant external tooling. The solo-first version preserved the core value proposition — organized, structured ideation output — without the engineering complexity that would have consumed the entire timeline.
+
+Bolt was the right platform for this project because the interaction model requires things that static tools cannot handle: conditional branching between two entry paths, a countdown timer with pause and advance controls, and phase transitions with persistent state. Bolt handles React component architecture natively and can call external APIs, which made the OpenAI integration — text generation via `gpt-4o`, voice transcription via Whisper — achievable within the build timeline. The declaration named Anthropic as the API provider; this was changed to OpenAI after evaluating that `gpt-4o` with JSON mode produced more reliably structured output for the HMW generation flow, and Whisper is the strongest available transcription model for the voice input feature.
+
+Voice input was added because 60–120 seconds is a short window, and designers who type slowly would spend most of a round on mechanics rather than thinking. Auto-save was chosen over a manual save button because an extra click at the end of a timed round breaks creative momentum — the round should end and the idea should be captured without the user having to do anything.
+
+## What would I do differently?
+
+The five-step intake redesign happened after peer review, which meant rebuilding something that was already built. If I were starting again, I would prototype the intake structure first — before writing any code — to confirm that the step-by-step format felt right before committing to it. The late redesign cost more time than an early decision would have.
+
+The AI suggestion feature generates a complete idea: a title and a description. In practice, this can short-circuit the thinking rather than support it — a designer who is close to their own idea may take the AI's version instead of finishing their own. A better version of this feature would offer a single reframing question rather than a complete idea, nudging the designer's thinking without replacing it.
+
+## What does this work demonstrate?
+
+This project primarily demonstrates C1 and C8. C1 is evidenced by the full iteration arc: the intake went from a single-page form to a five-step sequential flow after peer feedback; the HMW selection went from a radio-button tap to a full refinement editor with a tips carousel and inspiration panel; the session structure went from per-round breaks to back-to-back rounds with a single summary. Each change was a response to a concrete problem, not a stylistic preference. C8 is evidenced by the deployed tool itself — it handles both entry paths, all AI features work end to end, and a user can complete a full session and export results without hitting a broken state.
+
+C2 is demonstrated by the seven structured documentation files in `project code/docs/`, which were updated each time a screen changed to keep the spec in sync with the implementation, and by the Whisper encoding fix in `src/api/openai.ts`, which required reading the base64 encoding loop carefully to understand why large audio blobs were being silently truncated before reaching the server. C7 is demonstrated by the Whisper transcription diagnosis — a bug that required working through three separate hypotheses (environment, code, hardware) before finding the actual cause — and by the practice of reading Bolt's implementation plan in full before confirming it, which caught several misinterpretations of the branching logic between Path A and Path B before they were built.
