@@ -9,43 +9,49 @@ IdeaFlow is a single-session linear tool with no persistent navigation. Screens 
 
 ### 1. Entry Screen
 **Primary screen — always first**
-- Headline: app name + one-line description
-- Two CTA buttons:
-  - "Start from pain points" → Path A (UserContextScreen)
-  - "I already have a HMW" → Path B (DirectHMWScreen)
+- Logo + app name + two-line description
+- Two path cards (side by side on desktop, stacked on mobile):
+  - "Start from pain points" → Path A (`IntakeFlowScreen`)
+  - "I already have a HMW" → Path B (`DirectHMWScreen`)
+- Each card has an icon, headline, description, and inline CTA link
 - No back navigation from here
 
 ---
 
-### 2A. User Context Screen *(Path A only)*
-**Primary screen — Step 1 of 3**
-- Page title: "Who are you designing for?"
-- Two required text fields:
-  - "Target user" — placeholder: "e.g. first-time home buyers"
-  - "Age range" — placeholder: "e.g. 25–40"
-- Validation: both fields must be non-empty before CTA activates
-- CTA: "Continue" → Pain Points screen
+### 2A. Intake Flow Screen *(Path A only)*
+**Single screen — 5 sequential steps, one question at a time**
+
+A progress bar ("Step X of 5") tracks position across all five steps. Steps 1–2 use a single-line text input; steps 3–5 use a textarea with a minimum character count. A context bar ("For: [targetUser], age [ageRange]") appears below the question heading from step 3 onward.
+
+| Step | Question | Input type | Validation |
+|------|----------|-----------|------------|
+| 1 | "Who are you designing for?" | Text input | Non-empty; Enter key advances |
+| 2 | "What age range are they?" | Text input | Non-empty; Enter key advances |
+| 3 | "What did you observe or learn?" | Textarea | Min 20 chars |
+| 4 | "What outcome do users want?" | Textarea | Min 20 chars |
+| 5 | "What is the scope or context?" | Textarea | Min 10 chars |
+
+- CTA on steps 1–4: "Continue" → advances to next step
+- CTA on step 5: "Generate How Might We questions" → triggers API call → HMW Generation screen
+- Back on step 1: returns to Entry screen
+- Back on steps 2–5: returns to the previous step within the same screen
+- Voice input available on all fields via mic button
+
+---
+
+### 2B. Direct HMW Input Screen *(Path B only)*
+**Primary screen**
+- Page title: "What's your design challenge?"
+- Single text input — placeholder: "How might we..."
+- Inline validation: must begin with "How might we" (case-insensitive)
+- Error messages: "Your question should start with 'How might we'" / "Please enter your How Might We question"
+- CTA: "Start ideation" → Pre-session Setup screen
 - Back: returns to Entry screen
 
 ---
 
-### 2B. Insights Input Screen *(Path A only)*
-**Primary screen — Step 2 of 3**
-- Page title: "Tell us about your research"
-- Target user + age range shown as context at top
-- Three required textarea fields:
-  1. "What did you observe or learn?" (min 20 chars)
-  2. "What outcome do users want?" (min 20 chars)
-  3. "What is the scope or context?" (min 10 chars)
-- Real-time character count shown per field
-- All three fields required before CTA activates
-- CTA: "Generate How Might We questions" → triggers API call → HMW Generation screen
-- Back: returns to User Context screen
-
----
-
 ### 3A. HMW Generation Screen *(Path A only)*
-**Primary screen — Step 3 of 3 (Browse sub-step)**
+**Primary screen — Browse sub-step**
 - Page title: "Your How Might We questions"
 - Target user + age range shown as context bar at top
 - AI-generated HMW cards grouped by theme
@@ -56,12 +62,12 @@ IdeaFlow is a single-session linear tool with no persistent navigation. Screens 
   - 1 selected: "Edit my HMW"
   - 2+ selected: "Combine HMWs and Edit"
 - CTA navigates to HMW Editor screen
-- Back: returns to Pain Points screen
+- Back: returns to Intake Flow screen (step 5)
 
 ---
 
 ### 3B. HMW Editor Screen *(Path A only)*
-**Primary screen — Step 3 of 3 (Compose sub-step)**
+**Primary screen — Compose sub-step**
 - Single editable textarea pre-seeded with selected/combined HMW text
 - Inline validation:
   - Must start with "How might we" (case-insensitive)
@@ -71,17 +77,6 @@ IdeaFlow is a single-session linear tool with no persistent navigation. Screens 
 - Collapsible side panel: all generated HMWs grouped as "Selected" and "Other HMWs" for reference
 - CTA: "Confirm HMW" (disabled until validation passes) → Pre-session Setup screen
 - Back: returns to HMW Generation screen
-
----
-
-### 3C. Direct HMW Input Screen *(Path B only)*
-**Primary screen**
-- Page title: "What's your design challenge?"
-- Single text input — placeholder: "How might we..."
-- Inline validation: must begin with "How might we" (case-insensitive)
-- Error messages: "Your question should start with 'How might we'" / "Please enter your How Might We question"
-- CTA: "Start ideation" → Pre-session Setup screen
-- Back: returns to Entry screen
 
 ---
 
@@ -174,9 +169,12 @@ IdeaFlow is a single-session linear tool with no persistent navigation. Screens 
 
 | Screen | H1 (Page title) | Key fields / content | Primary action |
 |--------|----------------|----------------------|----------------|
-| Entry | App name + tagline | — | 2 path CTAs |
-| User context | "Who are you designing for?" | 2 text fields | Continue |
-| Insights input | "Tell us about your research" | 3 textarea fields + char counts | Generate HMWs |
+| Entry | "IdeaFlow" | Two path cards | Start from pain points · I already have a HMW |
+| Intake Flow (step 1) | "Who are you designing for?" | Text input | Continue |
+| Intake Flow (step 2) | "What age range are they?" | Text input | Continue |
+| Intake Flow (step 3) | "What did you observe or learn?" | Textarea (min 20) | Continue |
+| Intake Flow (step 4) | "What outcome do users want?" | Textarea (min 20) | Continue |
+| Intake Flow (step 5) | "What is the scope or context?" | Textarea (min 10) | Generate HMWs |
 | HMW generation | "Your How Might We questions" | Theme-grouped HMW cards, multi-select | Edit / Combine HMW |
 | HMW editor | (HMW text) | Single editable textarea + side panel reference | Confirm HMW |
 | Direct HMW | "What's your design challenge?" | Single input + validation | Start ideation |
@@ -189,7 +187,7 @@ IdeaFlow is a single-session linear tool with no persistent navigation. Screens 
 ## Navigation Rules
 
 - **Forward only** during a session — no back navigation from Crazy 8s onward
-- **Back allowed** on setup screens: Entry → User context → Pain points → HMW generation → HMW editor → Pre-session
+- **Back allowed** on setup screens: Entry → Intake Flow (step 1 returns to Entry; steps 2–5 return to previous step) → HMW Generation → HMW Editor → Pre-session
 - **No global nav** — IdeaFlow has no persistent header navigation, sidebar, or menu
 - **No auth** — no login, no accounts, no saved sessions between visits
 - **Context bar** — selected HMW + target user persists as a non-interactive banner from Pre-session Setup through to Summary
@@ -201,8 +199,8 @@ IdeaFlow is a single-session linear tool with no persistent navigation. Screens 
 
 | Data | First captured | Shown again on |
 |------|---------------|----------------|
-| Target user + age range | User Context | Pain Points (context), HMW Generation, Pre-session, Crazy 8s, Summary |
-| Insight + outcome + scope | Insights input | HMW Generation (context) |
+| Target user + age range | Intake Flow (steps 1–2) | Intake Flow step 3+ (context), HMW Generation, Pre-session, Crazy 8s, Summary |
+| Insight + outcome + scope | Intake Flow (steps 3–5) | HMW Generation (context) |
 | Selected HMW | HMW Editor / Direct input | Pre-session, Crazy 8s, Summary |
 | Timer preset | Pre-session setup | Summary (session stats) |
 | Crazy 8s prompts | Pre-generated at session start | Crazy 8s (current round), Summary (each card), AI fill (round context) |

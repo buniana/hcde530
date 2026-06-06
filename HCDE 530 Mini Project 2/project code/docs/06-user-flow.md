@@ -12,7 +12,7 @@ IdeaFlow has two entry paths that converge into a shared Crazy 8s session, follo
        │
        ▼
 [Entry screen]
-Choose entry path
+Two path cards
        │
    ┌───┴──────────────────────────┐
    │                              │
@@ -21,14 +21,19 @@ PATH A                          PATH B
 (from pain points)              (direct HMW)
    │                              │
    ▼                              │
-[User Context screen]             │
-Target user + age range           │
-(both required)                   │
-   │                              │
-   ▼                              │
-[Insights Input screen]           │
-3 research fields                 │
-(all required)                    │
+[Intake Flow screen]              │
+5 sequential steps,               │
+one question at a time            │
+Progress bar: Step X of 5         │
+                                  │
+  Step 1: Who are you designing for?        │
+  Step 2: What age range are they?          │
+  Step 3: What did you observe or learn?    │
+  Step 4: What outcome do users want?       │
+  Step 5: What is the scope or context?     │
+                                  │
+  Step 5 CTA triggers API call    │
+  → HMW Generation screen         │
    │                              │
    ▼                              │
 [HMW Generation screen]           │
@@ -98,8 +103,8 @@ Validation: starts "How might we" │
 | Screen | Path | Required inputs | Outputs |
 |--------|------|----------------|---------|
 | Entry | Both | Path choice (A or B) | — |
-| User Context | A only | Target user, age range (both required) | Stored in session state |
-| Insights Input | A only | 3 research fields (min chars each) | Stored in session state |
+| Intake Flow (Step 1–2) | A only | Target user (text), age range (text) | Stored in session state |
+| Intake Flow (Step 3–5) | A only | Insight (min 20), desired outcome (min 20), scope (min 10) | Stored; triggers HMW API on step 5 |
 | HMW Generation | A only | Select 1+ HMW cards | Selected HMWs passed to editor |
 | HMW Editor | A only | Valid "How might we" text ≥ 30 chars | selectedHMW stored |
 | Direct HMW | B only | Valid "How might we" text | selectedHMW stored |
@@ -112,9 +117,10 @@ Validation: starts "How might we" │
 ## Key Interaction Rules
 
 ### Setup phase
-- **Path A only:** User Context screen appears before Insights Input — always required, never skippable
-- **Path B:** Skips directly to Direct HMW input — no User Context screen, no AI generation
-- **HMW validation:** Both Path A (editor) and Path B (direct) require the text to start with "How might we" before the CTA activates
+- **Path A only:** Intake Flow screen collects all 5 inputs in sequence before triggering HMW generation. Steps 1–2 use a single-line text input (Enter key advances); steps 3–5 use a textarea with a character minimum. A context bar ("For: [user], age [range]") appears from step 3 onward.
+- **Path A back navigation:** Step 1 returns to Entry; steps 2–5 return to the previous step within the same Intake Flow screen.
+- **Path B:** Skips directly to Direct HMW input — no Intake Flow, no AI generation.
+- **HMW validation:** Both Path A (editor) and Path B (direct) require the text to start with "How might we" before the CTA activates.
 
 ### Crazy 8s session
 - **Timer color coding:** Normal (primary) → amber at ≤30s → red at ≤10s with pulse animation
