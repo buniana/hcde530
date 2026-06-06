@@ -1,5 +1,7 @@
 # IdeaFlow — Bolt Interaction Rules
 
+> This file is the Bolt equivalent of a `.cursorrules` file. Its contents were pasted into Bolt's "Project instructions" system prompt to guide the AI's understanding of the app's structure, state logic, phase transitions, and interaction rules throughout the build.
+
 ## App Structure
 The app has four distinct phases. Always track the current phase in state and gate UI accordingly.
 
